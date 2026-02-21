@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT: регистрация из РФ</title>
+    <!-- Favicon: чёрный круг в стиле частиц -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='black'/%3E%3C/svg%3E" type="image/svg+xml">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Белый фон для страницы */
+        body {
+            background-color: #ffffff; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Холст с чёрными частицами на заднем плане */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Карточка поверх частиц */
+        .card {
+            position: relative;
+            z-index: 2;
+            max-width: 720px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2),
+                        0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 40px 40px 48px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.2s ease;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #0a2a44;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 span {
+            background: #10a37f;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .subhead {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px dashed rgba(16, 163, 127, 0.3);
+        }
+
+        .steps-list {
+            list-style: none;
+            counter-reset: step-counter;
+            margin-bottom: 36px;
+        }
+
+        .steps-list li {
+            counter-increment: step-counter;
+            background: white;
+            margin-bottom: 16px;
+            padding: 20px 24px 20px 64px;
+            border-radius: 30px;
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: #1a2b3c;
+            box-shadow: 0 8px 18px -8px rgba(0, 40, 60, 0.12);
+            position: relative;
+            transition: transform 0.1s ease, box-shadow 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .steps-list li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 24px -10px rgba(0, 80, 100, 0.2);
+        }
+
+        .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: #10a37f;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 12px rgba(16, 163, 127, 0.3);
+        }
+
+        .steps-list li strong {
+            color: #0f2b3f;
+            font-weight: 700;
+        }
+
+        .important-note {
+            background: linear-gradient(115deg, #fff7e5, #fff1dc);
+            border-left: 8px solid #f5b042;
+            padding: 24px 28px;
+            border-radius: 32px;
+            margin: 30px 0 24px;
+            font-size: 1.1rem;
+            box-shadow: 0 12px 22px -12px rgba(200, 120, 20, 0.2);
+            color: #2d1f0c;
+        }
+
+        .important-note p {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .important-note .emoji-big {
+            font-size: 2.2rem;
+            line-height: 1;
+        }
+
+        .footer-note {
+            font-size: 0.95rem;
+            color: #4a5a6a;
+            background: rgba(16, 163, 127, 0.08);
+            padding: 16px 20px;
+            border-radius: 40px;
+            text-align: center;
+            border: 1px solid rgba(16, 163, 127, 0.2);
+            margin-top: 20px;
+        }
+
+        .footer-note a {
+            color: #10a37f;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px dotted;
+        }
+
+        .footer-note a:hover {
+            color: #0b7b5e;
+        }
+
+        @media (max-width: 550px) {
+            .card {
+                padding: 28px 20px 32px;
+                border-radius: 32px;
+            }
+            h1 {
+                font-size: 1.8rem;
+                flex-wrap: wrap;
+            }
+            .steps-list li {
+                padding: 18px 16px 18px 56px;
+                font-size: 0.98rem;
+            }
+            .steps-list li::before {
+                left: 14px;
+                width: 28px;
+                height: 28px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="card">
+        <h1>
+            ChatGPT · регистрация в РФ
+            <span>инструкция</span>
+        </h1>
+        <div class="subhead">
+            🔒 Простой способ создать аккаунт, даже если сервис недоступен напрямую
+        </div>
+
+        <ol class="steps-list">
+            <li><strong>Подключаете VPN</strong> (выберите страну, где ChatGPT открыт, например, Украину или другую европейскую).</li>
+            <li><strong>После пишите в поисковую строчку вашего браузера «виртуальный Украинский номер» и оформляете номер.</strong> Подойдут любые популярные сервисы виртуальных номеров.</li>
+            <li><strong>Теперь заходите на Chat GPT</strong> — официальный сайт chat.openai.com.</li>
+            <li><strong>После проходите регистрацию, вводя Украинский номер</strong> (тот самый, который получили на шаге 2). На него придёт SMS с кодом.</li>
+            <li><strong>Вуаля! Вы создали аккаунт.</strong> Можете сразу начать пользоваться.</li>
+        </ol>
+
+        <div class="important-note">
+            <p>
+                <span class="emoji-big">📱</span>
+                <span><strong>ВИРТУАЛЬНЫЙ НОМЕР МОЖНО КУПИТЬ НА ОЧЕНЬ МНОГИХ САЙТАХ.</strong> Выбирайте проверенные сервисы с приёмом SMS из Украины.</span>
+            </p>
+        </div>
+
+        <div class="footer-note">
+            ⚡ Сохраните инструкцию или поделитесь с друзьями. Если возникнут сложности — попробуйте другой сервис виртуальных номеров или смените страну VPN.
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let width, height;
+            let particles = [];
+            const PARTICLE_COUNT = 100;
+            const CONNECT_DISTANCE = 150;
+            const PARTICLE_SPEED = 0.5;
+
+            const PARTICLE_COLOR = 'rgba(0, 0, 0, 0.7)';
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * PARTICLE_SPEED * 1.5,
+                        vy: (Math.random() - 0.5) * PARTICLE_SPEED * 1.5,
+                    });
+                }
+            }
+
+            function resizeCanvas() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                initParticles();
+            }
+
+            function updateParticles() {
+                for (let p of particles) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0 || p.x > width) {
+                        p.vx *= -0.98;
+                        p.x = Math.max(0, Math.min(width, p.x));
+                    }
+                    if (p.y < 0 || p.y > height) {
+                        p.vy *= -0.98;
+                        p.y = Math.max(0, Math.min(height, p.y));
+                    }
+                }
+            }
+
+            function drawParticlesAndLines() {
+                ctx.clearRect(0, 0, width, height);
+
+                ctx.lineWidth = 1.2;
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < CONNECT_DISTANCE) {
+                            const opacity = (1 - distance / CONNECT_DISTANCE) * 0.4;
+                            ctx.strokeStyle = `rgba(0, 0, 0, ${opacity})`;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                ctx.fillStyle = PARTICLE_COLOR;
+                for (let p of particles) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function animate() {
+                updateParticles();
+                drawParticlesAndLines();
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+            });
+
+            resizeCanvas();
+            animate();
+        })();
+    </script>
+</body>
+</html>
